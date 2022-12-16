@@ -45,6 +45,24 @@ export function login(ctx: Koa.ParameterizedContext, userName: string, passWord:
   }
 }
 
+export function webauthn_login(ctx: Koa.ParameterizedContext, userName: string) {
+  GlobalVariable.set(LOGIN_COUNT, GlobalVariable.get(LOGIN_COUNT, 0) + 1);
+  const ip = ctx.socket.remoteAddress;
+  const ipMap = GlobalVariable.get(LOGIN_FAILED_KEY);
+  if (ipMap) delete ipMap[ip];
+  // Session Session state changes to logged in
+  const user = userSystem.getUserByUserName(userName);
+  user.loginTime = new Date().toLocaleString();
+  ctx.session["login"] = true;
+  ctx.session["userName"] = userName;
+  ctx.session["uuid"] = user.uuid;
+  ctx.session["token"] = timeUuid();
+  ctx.session.save();
+  logger.info(`[WEBAUTHN LOGIN] IP: ${ip} Login ${userName} successful!`);
+  logger.info(`[WEBAUTHN LOGIN] Token: ${ctx.session["token"]}`);
+  return ctx.session["token"];
+}
+
 export function check(ctx: Koa.ParameterizedContext) {
   if (ctx.session["login"] && ctx.session["userName"] && ctx.session["token"]) return true;
   return false;

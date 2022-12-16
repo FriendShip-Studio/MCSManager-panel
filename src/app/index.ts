@@ -33,6 +33,8 @@ import scheduleRouter from "./routers/protected/schedule_router";
 
 import environmentRouter from "./routers/private/environment_router";
 
+import webauthnRouter from "./routers/public/webauthn_router";
+
 // all routes load entry points
 export function index(app: Koa<Koa.DefaultState, Koa.DefaultContext>) {
   // API router
@@ -50,7 +52,7 @@ export function index(app: Koa<Koa.DefaultState, Koa.DefaultContext>) {
   apiRouter.use(scheduleRouter.routes()).use(scheduleRouter.allowedMethods());
   apiRouter.use(settingsRouter.routes()).use(settingsRouter.allowedMethods());
   apiRouter.use(environmentRouter.routes()).use(environmentRouter.allowedMethods());
-
+  apiRouter.use(webauthnRouter.routes()).use(webauthnRouter.allowedMethods())
   // Top router
   app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
 }

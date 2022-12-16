@@ -122,3 +122,4 @@ src/public/1.png
 
 # IntelliJ Idea project files
 /.idea/*
+webauthn_user_credentials.json
